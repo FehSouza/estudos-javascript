@@ -1,0 +1,68 @@
+@keyframes loading {
+  from {
+    transform: rotate(0);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+
+  &__line {
+    margin-top: 32px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+
+    &.form__line-2 {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .form__wrapper {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+
+      &--input {
+        margin-top: 4px;
+      }
+
+      &--success {
+        position: absolute;
+        bottom: -20px;
+        color: green;
+      }
+
+      &--error {
+        position: absolute;
+        bottom: -20px;
+        color: red;
+      }
+    }
+  }
+
+  &__button {
+    margin-top: 32px;
+    height: 24px;
+  }
+
+  &__loading {
+    max-width: 24px;
+    margin: 0 auto;
+    margin-top: 32px;
+    animation: loading 1s linear infinite;
+  }
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
