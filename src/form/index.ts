@@ -1,4 +1,4 @@
-const enviado = false
+const dataSent = true
 
 type HTMLElementEvent<T extends HTMLElement> = Event & {
   target: T & { value: string }
@@ -105,25 +105,11 @@ const onChangeCNPJ = (value: string) => (cnpjValue = value)
 const onChangeEmail = (value: string) => (emailValue = value)
 const onChangePhone = (value: string) => (phoneValue = value)
 
-const validateName = (value: string) => {
-  return value.length > 2
-}
-
-const validateCPF = (value: string) => {
-  return value.length === 14
-}
-
-const validateCNPJ = (value: string) => {
-  return value.length === 18
-}
-
-const validateEmail = (value: string) => {
-  return value.includes('@') && value.includes('.com')
-}
-
-const validatePhone = (value: string) => {
-  return value.length === 14 || value.length === 15
-}
+const validateName = (value: string) => value.length > 2
+const validateCPF = (value: string) => value.length === 14
+const validateCNPJ = (value: string) => value.length === 18
+const validateEmail = (value: string) => value.includes('@') && value.includes('.com')
+const validatePhone = (value: string) => value.length === 14 || value.length === 15
 
 const maskCPF = (value: string): string => {
   value = value.replace(/\D/g, '')
@@ -150,7 +136,13 @@ const maskPhone = (value: string): string => {
 }
 
 const createForm = () => {
-  const name = createFormInput({ labelText: 'Digite o nome:', labelName: 'name', placeholder: 'Digite o nome', change: onChangeName })
+  const name = createFormInput({
+    labelText: 'Digite o seu nome:',
+    labelName: 'name',
+    placeholder: 'Digite o seu nome',
+    change: onChangeName,
+  })
+
   const cpf = createFormInput({
     labelText: 'Digite o CPF',
     labelName: 'cpf',
@@ -159,6 +151,7 @@ const createForm = () => {
     change: onChangeCPF,
     mask: maskCPF,
   })
+
   const cnpj = createFormInput({
     labelText: 'Digite o CNPJ',
     labelName: 'cnpj',
@@ -167,6 +160,7 @@ const createForm = () => {
     change: onChangeCNPJ,
     mask: maskCNPJ,
   })
+
   const email = createFormInput({
     labelText: 'Digite o e-mail',
     labelName: 'email',
@@ -174,6 +168,7 @@ const createForm = () => {
     placeholder: 'Digite o e-mail',
     change: onChangeEmail,
   })
+
   const phone = createFormInput({
     labelText: 'Digite o telefone',
     labelName: 'phone',
@@ -194,7 +189,52 @@ const createForm = () => {
   line2.appendChild(email.wrapper)
   line2.appendChild(phone.wrapper)
 
-  let submitted = false
+  const buttonSubmit = document.createElement('button')
+  buttonSubmit.classList.add('form__button')
+  buttonSubmit.textContent = 'Enviar'
+
+  const buttonBack = document.createElement('button')
+  buttonBack.classList.add('form__button')
+  buttonBack.textContent = 'Voltar'
+
+  const loading = document.createElement('img')
+  loading.classList.add('form__loading')
+  loading.setAttribute('src', 'loading.svg')
+
+  buttonSubmit.addEventListener('click', (e) => {
+    e.preventDefault()
+
+    const isValidName = validateName(nameValue)
+    const isValidCpf = validateCPF(cpfValue)
+    const isValidCnpj = validateCNPJ(cnpjValue)
+    const isValidEmail = validateEmail(emailValue)
+    const isValidPhone = validatePhone(phoneValue)
+
+    isValidName ? name.setStatus('success', 'Dado válido') : name.setStatus('error', 'Digite um nome válido')
+    isValidCpf ? cpf.setStatus('success', 'Dado válido') : cpf.setStatus('error', 'Digite um CPF válido')
+    isValidCnpj ? cnpj.setStatus('success', 'Dado válido') : cnpj.setStatus('error', 'Digite um CNPJ válido')
+    isValidEmail ? email.setStatus('success', 'Dado válido') : email.setStatus('error', 'Digite um e-mail válido')
+    isValidPhone ? phone.setStatus('success', 'Dado válido') : phone.setStatus('error', 'Digite um telefone válido')
+
+    if (isValidName && isValidCpf && isValidCnpj && isValidEmail && isValidPhone) {
+      buttonSubmit.remove()
+      form.appendChild(loading)
+
+      setTimeout(() => {
+        form.innerHTML = ''
+
+        if (dataSent) {
+          const text = createFormMessageSubmit('Parabéns, seu formulário foi enviado com sucesso')
+          form.appendChild(text)
+        } else {
+          const text = createFormMessageSubmit('Sinto muito, seu formulário não foi enviado com sucesso, tente novamente mais tarde')
+          form.appendChild(text)
+        }
+
+        form.appendChild(buttonBack)
+      }, 2000)
+    }
+  })
 
   const clearForm = () => {
     nameValue = ''
@@ -209,14 +249,8 @@ const createForm = () => {
     phone.resetValue()
   }
 
-  const buttonBack = document.createElement('button')
-  buttonBack.classList.add('form__button')
-  buttonBack.textContent = 'Voltar'
-
   buttonBack.addEventListener('click', (e) => {
     e.preventDefault()
-
-    submitted = false
 
     form.innerHTML = ''
     form.appendChild(line1)
@@ -225,62 +259,15 @@ const createForm = () => {
     clearForm()
   })
 
-  const buttonSubmit = document.createElement('button')
-  buttonSubmit.classList.add('form__button')
-  buttonSubmit.textContent = 'Enviar'
-
-  buttonSubmit.addEventListener('click', (e) => {
-    e.preventDefault()
-
-    if (submitted) return
-    const isValidName = validateName(nameValue)
-    const isValidCpf = validateCPF(cpfValue)
-    const isValidCnpj = validateCNPJ(cnpjValue)
-    const isValidEmail = validateEmail(emailValue)
-    const isValidPhone = validatePhone(phoneValue)
-
-    isValidName ? name.setStatus('success', 'Certo') : name.setStatus('error', 'Digite um nome válido')
-    isValidCpf ? cpf.setStatus('success', 'Certo') : cpf.setStatus('error', 'Digite um CPF válido')
-    isValidCnpj ? cnpj.setStatus('success', 'Certo') : cnpj.setStatus('error', 'Digite um CNPJ válido')
-    isValidEmail ? email.setStatus('success', 'Certo') : email.setStatus('error', 'Digite um e-mail válido')
-    isValidPhone ? phone.setStatus('success', 'Certo') : phone.setStatus('error', 'Digite um telefone válido')
-
-    if (isValidName && isValidCpf && isValidCnpj && isValidEmail && isValidPhone) {
-      submitted = true
-
-      buttonSubmit.remove()
-
-      const image = document.createElement('img')
-      image.classList.add('form__loading')
-      image.setAttribute('src', 'loading.svg')
-      form.appendChild(image)
-
-      setTimeout(() => {
-        form.innerHTML = ''
-
-        if (enviado) {
-          const text = createFormMessageSubmit('Parabéns, seu formulário foi enviado com sucesso')
-          form.appendChild(text)
-        } else {
-          const text = createFormMessageSubmit('Sinto muito : ( seu formulário não foi enviado com sucesso, tente novamente mais tarde')
-          form.appendChild(text)
-        }
-
-        form.appendChild(buttonBack)
-      }, 2000)
-    }
-  })
-
   const form = document.createElement('form')
   form.classList.add('form')
-
   form.appendChild(line1)
   form.appendChild(line2)
   form.appendChild(buttonSubmit)
   return form
 }
 
-const setForm = () => {
+const renderForm = () => {
   const $container = document.querySelector('.container')
   if (!$container) return
 
@@ -288,4 +275,4 @@ const setForm = () => {
   $container.appendChild(form)
 }
 
-setForm()
+renderForm()
