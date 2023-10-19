@@ -20,7 +20,7 @@ Desenvolvido usando: Typescript, prettier
 
 &nbsp;
 
-## Instalando dependências
+## Instalando as dependências
 
 Front-end:
 
@@ -28,7 +28,7 @@ yarn install
 
 &nbsp;
 
-## Executando aplicação
+## Executando a aplicação
 
 Para rodar o Front-end:
 
