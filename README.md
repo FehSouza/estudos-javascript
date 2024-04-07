@@ -1,8 +1,8 @@
-# Estudos
+# Estudos - JavaScript
 
 ## Contexto
 
-Este repositório foi criado com o intuito de armazenar em um único lugar as minhas Provas de Conceito (POC)
+Este repositório foi criado com o intuito de armazenar em um único lugar as minhas Provas de Conceito (POC) feitas em JavaScript - TypeScript
 
 &nbsp;
 
